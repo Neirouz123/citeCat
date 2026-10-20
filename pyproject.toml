@@ -1,0 +1,63 @@
+[project]
+name = "citecat"
+version = "0.1.0"
+description = "MCP server for searching HAL scientific publications with verifiable citations"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+authors = [
+    {name = "CiteCat Contributors"}
+]
+
+dependencies = [
+    "mcp>=1.0.0",
+    "httpx>=0.27.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "ruff>=0.8.0",
+    "respx>=0.22.0",
+]
+semantic = [
+    "sentence-transformers>=3.0.0",
+    "numpy>=1.24.0",
+]
+pdf = [
+    "pymupdf>=1.23.0",
+]
+all = [
+    "citecat[dev,semantic,pdf]",
+]
+
+[project.scripts]
+citecat = "citecat.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/citecat"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+pythonpath = ["src"]
+markers = [
+    "live: live integration tests that require network access to HAL",
+    "live_llm: live integration tests that require an active external LLM or local Ollama endpoint",
+]
+addopts = "-m 'not live and not live_llm'"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
+
